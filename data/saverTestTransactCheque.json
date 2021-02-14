@@ -1,0 +1,66 @@
+{
+    "balance": 100,
+    "account type": "CHEQUING",
+    "transactions": [
+        {
+            "date": "2020-10-01",
+            "type": "TRANSFER",
+            "category": "test",
+            "value": 1
+        },
+        {
+            "date": "2020-10-02",
+            "type": "TRANSFER",
+            "category": "test",
+            "value": 2
+        },
+        {
+            "date": "2020-10-03",
+            "type": "TRANSFER",
+            "category": "test",
+            "value": 3
+        },
+        {
+            "date": "2020-10-04",
+            "type": "TRANSFER",
+            "category": "test",
+            "value": 4
+        },
+        {
+            "date": "2020-10-05",
+            "type": "TRANSFER",
+            "category": "test",
+            "value": 5
+        },
+        {
+            "date": "2020-10-06",
+            "type": "TRANSFER",
+            "category": "test",
+            "value": 6
+        },
+        {
+            "date": "2020-10-07",
+            "type": "TRANSFER",
+            "category": "test",
+            "value": 7
+        },
+        {
+            "date": "2020-10-08",
+            "type": "TRANSFER",
+            "category": "test",
+            "value": 8
+        },
+        {
+            "date": "2020-10-09",
+            "type": "TRANSFER",
+            "category": "test",
+            "value": 9
+        },
+        {
+            "date": "2020-10-10",
+            "type": "TRANSFER",
+            "category": "test",
+            "value": 10
+        }
+    ]
+}
