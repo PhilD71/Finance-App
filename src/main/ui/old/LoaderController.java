@@ -1,4 +1,4 @@
-package ui;
+package ui.old;
 
 import model.Account;
 import model.ChequingAccount;

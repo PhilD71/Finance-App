@@ -1,10 +1,7 @@
-package ui;
+package ui.old;
 
 
-import model.Account;
 import model.ChequingAccount;
-
-import java.time.LocalDate;
 
 /**
  * Controlls the chequing account, modifying it as necessary and calling views to display information

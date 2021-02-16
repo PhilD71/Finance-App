@@ -1,4 +1,4 @@
-package ui;
+package ui.old;
 
 import model.exceptions.IllegalWithdrawalException;
 import model.exceptions.TransactionException;

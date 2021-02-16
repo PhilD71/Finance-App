@@ -1,4 +1,4 @@
-package ui;
+package ui.old;
 
 import javax.swing.*;
 import java.awt.*;
@@ -7,9 +7,9 @@ import java.awt.event.ActionListener;
 import java.time.LocalDate;
 
 /**
- * A window to select category of transaction you would like sorted
+ * A window to sort transactions by date
  */
-public class CategorySelector extends JFrame implements ActionListener {
+public class DateSelector extends JFrame implements ActionListener {
 
     private Controller controller;
     private JButton enter;
@@ -17,10 +17,10 @@ public class CategorySelector extends JFrame implements ActionListener {
 
     /**
      * MODIFIES: This
-     * EFFECTS: Creates a category selector window
+     * EFFECTS: Creates a date selector window
      * @param controller account controller needed to send actions to
      */
-    public CategorySelector(Controller controller) {
+    public DateSelector(Controller controller) {
         super("Personal Finance Tracker");
         this.controller = controller;
         setupFrame();
@@ -46,7 +46,7 @@ public class CategorySelector extends JFrame implements ActionListener {
      */
     private JPanel displayTopWindow() {
         JPanel panel = new JPanel();
-        JLabel label = new JLabel("Enter the category you want to retrieve");
+        JLabel label = new JLabel("Enter the date you would like to retrieve transactions from");
         label.setVerticalAlignment(SwingConstants.CENTER);
         panel.add(label);
         return panel;
@@ -58,7 +58,7 @@ public class CategorySelector extends JFrame implements ActionListener {
      */
     private JPanel displayBotWindow() {
         JPanel panel = new JPanel();
-        text = new JTextField("category", 25);
+        text = new JTextField("yyyy-mm-dd",25);
         text.setHorizontalAlignment(SwingConstants.LEFT);
         text.addActionListener(this);
         panel.add(text);
@@ -71,18 +71,23 @@ public class CategorySelector extends JFrame implements ActionListener {
 
     /**
      * MODIFIES: Controller
-     * EFFECTS: When the button is pressed, the string in the text field gets sent to the controller
+     * EFFECTS: When the button is pressed, the string in the text field gets sent to the controller.
+     * Prompts user to re-enter details if error detected
      * @param e button press event
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        String catString = text.getText();
+        String dateString = text.getText();
         try {
-            controller.setCategory(catString);
+            String year = dateString.substring(0, dateString.indexOf('-'));
+            dateString = dateString.substring(dateString.indexOf('-') + 1);
+            String month = dateString.substring(0, dateString.indexOf('-'));
+            String day = dateString.substring(dateString.indexOf('-') + 1);
+            controller.setDate(LocalDate.of(Integer.parseInt(year), Integer.parseInt(month), Integer.parseInt(day)));
             controller.closeWindows();
-            controller.viewCategory();
+            controller.viewDate();
         } catch (Exception exp) {
-            new StartupErrorPopup("Error", WindowConstants.DISPOSE_ON_CLOSE);
+            new StartupErrorPopup("Check format! (yyyy-mm-dd)", WindowConstants.DISPOSE_ON_CLOSE);
         }
     }
 

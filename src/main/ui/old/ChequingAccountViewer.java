@@ -1,66 +1,57 @@
-package ui;
+package ui.old;
 
-import model.SavingAccount;
 import model.Transaction;
+
 import persistence.Saver;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+
 import java.io.FileNotFoundException;
+
 import java.util.List;
 
 /**
- * A viewer for a saving account
+ * A viewer for a chequing account
  */
-public class SavingAccountViewer extends AccountViewer {
-    private JButton savHistory;
-    private JButton goalSet;
+public class ChequingAccountViewer extends AccountViewer {
 
     /**
      * MODIFIES: This
-     * EFFECTS: Constructs a SavingAccountViewer
+     * EFFECTS: Constructs an ChequingAccountViewer
      *
      * @param controller controller for viewer
      */
-    public SavingAccountViewer(Controller controller) {
+    public ChequingAccountViewer(ChequingAccountController controller) {
         super(controller);
-        setTitle("Saving Account Tracker");
+        setTitle("Chequing Account Tracker");
     }
 
     /**
      * MODIFIES: This
-     * EFFECTS: Constructs a SavingAccountViewer
+     * EFFECTS: Constructs an ChequingAccountViewer
      *
      * @param controller      controller for viewer
      * @param transactionList list of transactions
      */
-    public SavingAccountViewer(Controller controller, List<Transaction> transactionList) {
+    public ChequingAccountViewer(ChequingAccountController controller, List<Transaction> transactionList) {
         super(controller, transactionList);
-        setTitle("Saving Account Tracker");
+        setTitle("Chequing Account Tracker");
     }
 
     /**
      * EFFECTS: creates panel with button to add transactions
      *
-     * @return JPanel with transaction adder button and a display history button
+     * @return JPanel with transaction adder button
      */
-    @Override
     protected JPanel displayTransactionAdder() {
         JPanel panel = new JPanel();
-        savHistory = new JButton("Saving History");
-        savHistory.addActionListener(this);
-        goalSet = new JButton("Set Goal");
-        goalSet.setActionCommand("set");
-        goalSet.addActionListener(this);
-        savHistory.setActionCommand("hist");
         addTrans = new JButton("Add Transaction");
         addTrans.addActionListener(this);
         addTrans.setActionCommand("add");
         addTrans.setHorizontalAlignment(SwingConstants.RIGHT);
         panel.add(addTrans);
-        panel.add(savHistory);
-        panel.add(goalSet);
         panel.setVisible(true);
         return panel;
     }
@@ -71,32 +62,18 @@ public class SavingAccountViewer extends AccountViewer {
      * @return: JPanel with balance of the account
      */
     protected JPanel displayBalance() {
-        SavingAccountController savCon = (SavingAccountController) controller;
-        JPanel panel = new JPanel(new GridLayout(1, 2));
-        JPanel innerLeft = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        JPanel innerRight = new JPanel((new FlowLayout(FlowLayout.RIGHT)));
+        JPanel panel = new JPanel(new GridLayout(1, 4));
         panel.setBorder(BorderFactory.createTitledBorder(
                 BorderFactory.createLineBorder(Color.black), "Information"));
-        innerLeft.add(new JLabel("Balance: " + balance));
-        innerRight.add(new JLabel("Goal of " + savCon.getGoal() + " " + metGoal(savCon.checkGoal())));
-        panel.add(innerLeft);
-        panel.add(innerRight);
+        panel.add(new JLabel("Balance: " + balance));
         panel.setVisible(true);
         return panel;
-    }
-
-    private String metGoal(boolean met) {
-        if (met) {
-            return "is met!";
-        } else {
-            return "is not met";
-        }
     }
 
     /**
      * EFFECTS: Creates a panel with buttons to sort transactions
      *
-     * @return: JPanel with 4 buttons to sort transactions
+     * @return: JPanel with 4 or 5 buttons to sort transactions
      */
     protected JPanel displayTransactionSorter() {
         JPanel panel = new JPanel(new FlowLayout());
@@ -107,6 +84,7 @@ public class SavingAccountViewer extends AccountViewer {
         panel.add(dayTrans);
         panel.add(typeTrans);
         panel.add(categoryTrans);
+        panel.add(directionTrans);
         return panel;
     }
 
@@ -127,31 +105,37 @@ public class SavingAccountViewer extends AccountViewer {
         categoryTrans = new JButton("By Category");
         categoryTrans.addActionListener(this);
         categoryTrans.setActionCommand("category");
+        directionTrans = new JButton("By Direction");
+        directionTrans.addActionListener(this);
+        directionTrans.setActionCommand("direction");
     }
 
     /**
      * MODIFIES: This, Account,
      * EFFECTS: If the action event is to save and exit, the account
      * is saved and the application is exited.
-     *
      * @param e action event
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        SavingAccountController sav = (SavingAccountController) controller;
+        ChequingAccountController chq = (ChequingAccountController) controller;
         for (String s : viewStrings) {
             if (s.equals(e.getActionCommand())) {
                 actionSwitchOne(s);
             }
         }
         if (e.getActionCommand().equals("add")) {
-            new TransactionCreator(sav);
+            new TransactionCreator(chq);
         } else if (e.getActionCommand().equals("save")) {
-            save();
-        } else if (e.getActionCommand().equals("hist")) {
-            sav.displayHistory();
-        } else if (e.getActionCommand().equals("set")) {
-            sav.setGoalPopup();
+            Saver save = new Saver("./data/personalFinanceControllerSave.json");
+            try {
+                save.open();
+                save.writeAccount(controller.getAcc());
+                save.close();
+                System.exit(0);
+            } catch (FileNotFoundException fileNotFoundException) {
+                new StartupErrorPopup("critical error", JFrame.EXIT_ON_CLOSE);
+            }
         }
         if (e.getActionCommand().equals("exit")) {
             System.exit(0);
@@ -164,41 +148,26 @@ public class SavingAccountViewer extends AccountViewer {
      * EFFECTS:If the action event is to add a transaction, a transaction is added and displayed
      * If the action event is to sort transactions by a certain date, category, direction or type, only the
      * transactions which satisify that criteria are displayed.
-     *
      * @param msg action command string
      */
     protected void actionSwitchOne(String msg) {
-        SavingAccountController sav = (SavingAccountController) controller;
+        ChequingAccountController chq = (ChequingAccountController) controller;
         switch (msg) {
             case "all":
-                sav.viewDefault();
+                chq.viewDefault();
                 dispose();
                 break;
             case "day":
-                new DateSelector(sav);
+                new DateSelector(chq);
                 break;
             case "type":
-                new TypeSelector(sav);
+                new TypeSelector(chq);
                 break;
             case "category":
-                new CategorySelector(sav);
+                new CategorySelector(chq);
                 break;
+            case "direction":
+                new DirectionSelector(chq);
         }
     }
-
-    /**
-     * EFFECTS: Saves account details to a JSON
-     */
-    private void save() {
-        Saver save = new Saver("./data/personalFinanceControllerSave.json");
-        try {
-            save.open();
-            save.writeAccount((SavingAccount) controller.getAcc());
-            save.close();
-            System.exit(0);
-        } catch (FileNotFoundException fileNotFoundException) {
-            new StartupErrorPopup("critical error", JFrame.EXIT_ON_CLOSE);
-        }
-    }
-
 }

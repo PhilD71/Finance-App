@@ -1,6 +1,4 @@
-package ui;
-
-import model.SavingAccount;
+package ui.old;
 
 import javax.swing.*;
 import java.awt.*;
